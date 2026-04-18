@@ -1,0 +1,9 @@
+node_modules
+.next
+.env
+.env.local
+dist
+coverage
+backend/data/uploads/*
+!backend/data/uploads/.gitkeep
+backend/data/store.json

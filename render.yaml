@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: synapse-notebook-api
+    env: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_CHAT_MODEL
+        value: openai/gpt-4.1-mini
+      - key: OPENROUTER_EMBEDDING_MODEL
+        value: openai/text-embedding-3-small
+      - key: APP_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+  - type: web
+    name: synapse-notebook-web
+    env: node
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        sync: false

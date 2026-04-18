@@ -396,4 +396,4 @@ This repository is suitable for:
 - recruiter and hiring-manager evaluation
 - adaptation into a production-grade AI document reasoning product
 
-## License
+

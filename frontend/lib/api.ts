@@ -29,7 +29,15 @@ const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
     }
   }
 
-  return response.json();
+  const rawText = await response.text();
+
+  try {
+    return JSON.parse(rawText) as T;
+  } catch {
+    throw new Error(
+      `API returned malformed JSON for ${path}. This usually means the server response was truncated or corrupted.`,
+    );
+  }
 };
 
 export const api = {

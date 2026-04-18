@@ -2,29 +2,56 @@
 
 Synapse Notebook is an AI-first knowledge workspace for reading across documents, connecting ideas, surfacing missing concepts, and turning raw source material into usable understanding.
 
-The product is designed as a split-stack application:
+This project is built as a split-stack application:
 
 - `frontend/` contains the Next.js workspace UI
 - `backend/` contains the Express API, document ingestion pipeline, retrieval logic, and AI orchestration
 
-## Overview
+## Full Feature List
 
-The system accepts PDF and text documents, parses and chunks their contents, stores indexed knowledge, and enables a set of higher-level reasoning workflows on top of that document base.
+Synapse Notebook currently includes the following capabilities:
 
-Instead of behaving like a single-turn chatbot, the workspace is structured around deeper knowledge operations:
-
+- PDF upload support
+- TXT upload support
+- automatic file parsing
+- text normalization and chunking
+- document indexing
 - multi-document retrieval augmented generation
-- structured summarization
-- study material generation
-- cross-document insight discovery
+- grounded chat across selected documents
+- short summaries
+- key point extraction
+- important concept extraction
+- per-document summarization
+- combined summarization across multiple documents
+- study mode flashcards
+- study mode MCQs
+- study mode important exam questions
+- cross-document insight generation
 - knowledge gap detection
-- confusion detection
-- concept comparison
-- knowledge fusion
+- auto insight feed generation
+- confusion detection with simplified explanations
+- concept battle mode
+- knowledge fusion engine
+- modular Insight Lab interface
+- document selection workspace
+- AI insight side rail
+- browser-based podcast playback using text to speech
+- responsive dashboard UI for desktop and mobile
 
-The result is a workspace aimed at helping users build understanding across multiple sources rather than only query isolated snippets.
+## What The Product Does
 
-## Product Capabilities
+Users upload PDF or text documents, and the system:
+
+- parses and chunks the content
+- stores indexed document data
+- retrieves relevant chunks across multiple documents
+- answers grounded questions with RAG
+- generates summaries and study material
+- detects cross-document insights and knowledge gaps
+- compares concepts and fuses multiple sources into one model
+- reads generated output aloud through browser-based text to speech
+
+## Core Features
 
 - Multi-document upload for `.pdf` and `.txt`
 - Document parsing, chunking, and indexing
@@ -39,7 +66,7 @@ The result is a workspace aimed at helping users build understanding across mult
 - Knowledge fusion engine
 - Browser-based podcast mode using the Web Speech API
 
-## Technology Stack
+## Tech Stack
 
 ### Frontend
 
@@ -53,8 +80,8 @@ The result is a workspace aimed at helping users build understanding across mult
 - Node.js
 - Express
 - Multer
-- `pdf-parse`
-- Mongoose
+- PDF parsing with `pdf-parse`
+- MongoDB through Mongoose
 
 ### AI And Retrieval
 
@@ -85,82 +112,133 @@ backend/
   data/
 ```
 
-## Architecture Notes
+## Requirements
 
-The backend handles:
+Before running or deploying the project, you need:
 
-- ingestion of uploaded PDF and text files
-- text normalization and chunking
-- embedding generation
-- retrieval over indexed chunks
-- orchestration of OpenRouter prompts for summaries, insights, study outputs, and fusion workflows
+- Node.js 18+ recommended
+- npm
+- an OpenRouter account and API key
+- a MongoDB connection string for production
 
-The frontend handles:
+MongoDB is recommended for deployment. The backend can fall back to local JSON persistence in development if MongoDB is unavailable, but production should use a real MongoDB instance.
 
-- document selection and workspace navigation
-- RAG chat and structured result rendering
-- modular Insight Lab workflows
-- podcast playback through browser-native speech synthesis
-- proxying API requests through Next.js for cleaner local and deployed networking
+## API And Service Setup
 
-## External Services
+### 1. OpenRouter
 
-### OpenRouter
-
-OpenRouter is used for:
+This project uses OpenRouter for:
 
 - LLM completions
 - embeddings
 
-An OpenRouter account and API key are required for full AI functionality. Uploading remains resilient because the backend includes a local embedding fallback, but chat, summaries, insights, and study generation still depend on a valid OpenRouter API key.
+How to get it:
 
-Recommended models:
+1. Go to [https://openrouter.ai](https://openrouter.ai)
+2. Create an account
+3. Open the API keys page
+4. Create a new API key
+5. Copy that key into the backend environment as `OPENROUTER_API_KEY`
+
+Recommended models for this project:
 
 - Chat model: `openai/gpt-4.1-mini`
 - Embedding model: `openai/text-embedding-3-small`
 
-OpenRouter:
+If your OpenRouter balance is limited, keep the token caps configured in the backend and top up credits only when needed.
 
-- Site: [https://openrouter.ai](https://openrouter.ai)
-- API keys: available through the OpenRouter dashboard after account creation
+### 2. MongoDB
 
-### MongoDB
+How to get it:
 
-MongoDB is recommended for deployment and persistent storage.
+1. Create an account at [https://www.mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a cluster
+3. Create a database user
+4. Add your IP or allow access as needed
+5. Copy the connection string
+6. Put it into the backend environment as `MONGODB_URI`
 
-The backend can fall back to local JSON persistence during development if MongoDB is unavailable, but production deployments should use a real MongoDB instance such as MongoDB Atlas.
+For production deployment, MongoDB Atlas is the simplest option.
 
-MongoDB Atlas:
+### 3. Text To Speech
 
-- Site: [https://www.mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
-- Required setup: cluster, database user, and connection string
-
-### Text To Speech
-
-Podcast mode uses the browser's built-in Web Speech API.
+The podcast mode currently uses the browser's built-in Web Speech API.
 
 That means:
 
-- no external API key is required
-- no paid TTS provider is required
-- output quality depends on the browser and operating system voice set
+- it is free
+- it needs no external API key
+- it runs entirely in the browser
+- voice quality depends on the browser and operating system
 
 ## Environment Variables
 
 ### Backend
 
-The backend expects the following values:
+Create `backend/.env` from the example below.
 
-- `PORT`
-- `MONGODB_URI`
+Required:
+
 - `OPENROUTER_API_KEY`
+- `MONGODB_URI`
+
+Recommended:
+
 - `OPENROUTER_BASE_URL`
 - `OPENROUTER_CHAT_MODEL`
 - `OPENROUTER_EMBEDDING_MODEL`
 - `OPENROUTER_MAX_TOKENS`
 - `APP_URL`
 
-Example backend environment:
+### Frontend
+
+Create `frontend/.env.local` or `frontend/.env`.
+
+Required:
+
+- `NEXT_PUBLIC_API_URL`
+- `BACKEND_URL`
+
+## Local Development
+
+### 1. Backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+By default the backend runs on:
+
+```text
+http://127.0.0.1:8080
+```
+
+Useful test routes:
+
+- `http://127.0.0.1:8080/health`
+- `http://127.0.0.1:8080/api/documents`
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+By default the frontend runs on:
+
+```text
+http://localhost:3000
+```
+
+The frontend is configured to proxy API calls through Next.js, which avoids browser-side CORS issues during development and deployment.
+
+## Recommended Local Environment Files
+
+### `backend/.env`
 
 ```env
 PORT=8080
@@ -173,83 +251,41 @@ OPENROUTER_MAX_TOKENS=900
 APP_URL=http://localhost:3000
 ```
 
-### Frontend
-
-The frontend expects:
-
-- `NEXT_PUBLIC_API_URL`
-- `BACKEND_URL`
-
-Example frontend environment:
+### `frontend/.env.local`
 
 ```env
 NEXT_PUBLIC_API_URL=/api/proxy
 BACKEND_URL=http://127.0.0.1:8080
 ```
 
-## Local Development
-
-### Backend
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-Default local backend URL:
-
-```text
-http://127.0.0.1:8080
-```
-
-Useful routes:
-
-- `http://127.0.0.1:8080/health`
-- `http://127.0.0.1:8080/api/documents`
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-Default local frontend URL:
-
-```text
-http://localhost:3000
-```
-
-The frontend proxies API calls through Next.js, which helps avoid browser-side CORS issues in both local development and deployment.
-
 ## Deployment Guide
 
-This project is intended to run with:
+This project is designed to be deployed with:
 
 - backend on Render
 - frontend on Vercel
 
-The cleanest deployment order is:
+Deploy the backend first, then the frontend.
 
-1. deploy backend
-2. copy backend URL
-3. deploy frontend
-4. update backend `APP_URL` with the final frontend domain
+### Step 1: Push The Project To GitHub
 
-### Backend Deployment On Render
+Push the full repository to GitHub so both platforms can connect to it.
 
-Create a Render Web Service with the following configuration:
+### Step 2: Deploy The Backend To Render
+
+1. Open [https://render.com](https://render.com)
+2. Create a new Web Service
+3. Connect your GitHub repository
+4. Configure the service:
 
 - Environment: `Node`
 - Root Directory: `backend`
 - Build Command: `npm install`
 - Start Command: `npm start`
 
-Production should use `npm start`, not `npm run dev`.
+Use `npm start`, not `npm run dev`, in production.
 
-Suggested Render environment values:
+Add these environment variables in Render:
 
 ```env
 PORT=10000
@@ -262,26 +298,27 @@ OPENROUTER_MAX_TOKENS=900
 APP_URL=http://localhost:3000
 ```
 
-Once deployed, the following routes should be available:
+After deploy, test:
 
 - `https://your-backend-name.onrender.com/health`
 - `https://your-backend-name.onrender.com/api/documents`
 
-If those routes return `Not Found`, common causes are:
+If those are not working, verify:
 
-- incorrect Render root directory
-- incorrect start command
-- outdated deployment
-- wrong repository or branch configuration
+- Root Directory is `backend`
+- Start Command is `npm start`
+- the latest code is deployed
 
-### Frontend Deployment On Vercel
+### Step 3: Deploy The Frontend To Vercel
 
-Create a Vercel project with:
+1. Open [https://vercel.com](https://vercel.com)
+2. Import the same GitHub repository
+3. Configure the project:
 
 - Framework Preset: `Next.js`
 - Root Directory: `frontend`
 
-Suggested Vercel environment values:
+Add these environment variables in Vercel:
 
 ```env
 NEXT_PUBLIC_API_URL=/api/proxy
@@ -290,36 +327,35 @@ BACKEND_URL=https://your-backend-name.onrender.com
 
 Important:
 
-- `BACKEND_URL` should be the Render base URL
-- `BACKEND_URL` should not include `/api`
-- `NEXT_PUBLIC_API_URL` should remain `/api/proxy`
+- `BACKEND_URL` must be the Render base URL
+- do not add `/api` to `BACKEND_URL`
+- keep `NEXT_PUBLIC_API_URL=/api/proxy`
 
-### Final Production Wiring
+Deploy the frontend.
 
-After Vercel provides the deployed frontend URL, the backend `APP_URL` on Render should be updated to match it.
+### Step 4: Update Render After Vercel Deploys
 
-Example:
+Once Vercel gives you the production frontend URL, go back to Render and update:
 
 ```env
 APP_URL=https://your-frontend-name.vercel.app
 ```
 
-If both local and deployed frontend origins need to be allowed:
+If you want both local development and production allowed:
 
 ```env
 APP_URL=http://localhost:3000,https://your-frontend-name.vercel.app
 ```
 
+Save the environment variables and redeploy the backend if needed.
+
 ## Why The Frontend Uses A Proxy
 
-The frontend includes a Next.js proxy route so the browser talks to the frontend application, and the frontend forwards requests to the backend server.
+The frontend uses a Next.js proxy route so the browser talks to the frontend app, and the frontend app forwards requests to the backend. This helps avoid common issues with:
 
-This simplifies:
-
-- local development
-- browser networking differences between `localhost` and `127.0.0.1`
-- CORS handling
-- deployment configuration across Vercel and Render
+- local development networking
+- CORS
+- inconsistent browser access to `localhost` or `127.0.0.1`
 
 ## Available Backend Routes
 
@@ -337,42 +373,36 @@ This simplifies:
 - `POST /api/battle`
 - `POST /api/confusions`
 
-## Operational Notes
+## Notes On Cost And Token Limits
 
-### Token Limits And Cost Control
+OpenRouter usage depends on your account credits and chosen model. The backend is configured with smaller token caps to reduce failures and keep costs more predictable.
 
-The backend uses conservative token caps to reduce OpenRouter credit failures and improve structured JSON reliability.
-
-The default cap can be tuned through:
+If you want to tune output length, use:
 
 ```env
 OPENROUTER_MAX_TOKENS=900
 ```
 
-### Development Fallback Behavior
-
-If OpenRouter embeddings are unavailable, the backend falls back to a deterministic local embedding generator so uploads remain usable.
-
-This improves development resilience, but full AI generation still requires a valid OpenRouter API key.
+Increase only if you have enough credits and need longer outputs.
 
 ## Troubleshooting
 
-### Upload succeeds but AI actions fail
+### Upload works but AI actions fail
 
 Common causes:
 
 - missing `OPENROUTER_API_KEY`
 - insufficient OpenRouter credits
-- invalid model configuration
-- truncated JSON responses from the model
+- invalid or unreachable model name
 
 ### `Cannot reach API` from the frontend
 
-Typical causes:
+Check:
 
-- frontend is running against the wrong environment variables
-- backend is not reachable from the configured proxy target
-- `NEXT_PUBLIC_API_URL` is pointing directly at a backend URL instead of `/api/proxy`
+- frontend is running
+- backend is running
+- `NEXT_PUBLIC_API_URL=/api/proxy`
+- `BACKEND_URL` points to the correct backend base URL
 
 ### `Cannot GET /api`
 
@@ -385,15 +415,11 @@ Use:
 
 ### `AI returned invalid JSON`
 
-This usually indicates that the model response was truncated or did not return the required JSON shape. Smaller output budgets and stricter prompts have been used in this project to reduce that failure mode.
+This usually means the model response was cut off or wrapped in formatting. The backend strips common markdown fences, but the safest fix is to:
 
-## Repository Use
+- keep token caps moderate
+- keep prompts concise
+- retry the specific module
 
-This repository is suitable for:
-
-- portfolio review
-- hackathon demos
-- recruiter and hiring-manager evaluation
-- adaptation into a production-grade AI document reasoning product
 
 

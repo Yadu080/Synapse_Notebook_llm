@@ -80,7 +80,11 @@ const safeJson = (value) => {
   try {
     return JSON.parse(unwrapJsonResponse(value));
   } catch (error) {
-    throw new AppError('AI returned invalid JSON', 500, value);
+    const preview = unwrapJsonResponse(value).slice(0, 1200);
+    throw new AppError('AI returned invalid JSON', 500, {
+      preview,
+      note: 'The model returned malformed or truncated JSON. Output was shortened in the error payload.',
+    });
   }
 };
 

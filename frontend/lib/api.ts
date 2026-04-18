@@ -1,6 +1,25 @@
 import { ChatResponse, DocumentItem } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api/proxy';
+const fallbackErrorMessage = 'Request failed';
+
+const extractErrorMessage = (rawText: string, status: number) => {
+  if (!rawText) {
+    return `Request failed with status ${status}`;
+  }
+
+  try {
+    const data = JSON.parse(rawText);
+
+    if (typeof data?.message === 'string' && data.message.trim()) {
+      return data.message;
+    }
+
+    return fallbackErrorMessage;
+  } catch {
+    return rawText;
+  }
+};
 
 const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
   let response: Response;
@@ -20,13 +39,7 @@ const request = async <T>(path: string, init?: RequestInit): Promise<T> => {
 
   if (!response.ok) {
     const rawText = await response.text();
-
-    try {
-      const data = JSON.parse(rawText);
-      throw new Error(data.message || 'Request failed');
-    } catch {
-      throw new Error(rawText || `Request failed with status ${response.status}`);
-    }
+    throw new Error(extractErrorMessage(rawText, response.status));
   }
 
   const rawText = await response.text();

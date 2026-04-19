@@ -2,6 +2,8 @@
 
 Synapse Notebook is an AI-first knowledge workspace for reading across documents, connecting ideas, surfacing missing concepts, and turning raw source material into usable understanding.
 
+
+
 This project is built as a split-stack application:
 
 - `frontend/` contains the Next.js workspace UI
@@ -420,6 +422,12 @@ This usually means the model response was cut off or wrapped in formatting. The 
 - keep token caps moderate
 - keep prompts concise
 - retry the specific module
+
+---
+
+# Built by : Yadunandan M N , Sanjay S
+
+---
 
 
 

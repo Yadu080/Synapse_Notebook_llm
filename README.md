@@ -425,7 +425,7 @@ This usually means the model response was cut off or wrapped in formatting. The 
 
 ---
 
-# Built by : Yadunandan M N , Sanjay S
+# Built by : Yadunandan M N
 
 ---
 
